@@ -167,7 +167,7 @@ class Gridworld(mdp.MarkovDecisionProcess):
         for state, prob in statesAndProbs:
             counter[state] += prob
         newStatesAndProbs = []
-        for state, prob in counter.items():
+        for state, prob in list(counter.items()):
             newStatesAndProbs.append((state, prob))
         return newStatesAndProbs
 
@@ -335,7 +335,7 @@ def getUserAction(state, actionFunction):
         action = actions[0]
     return action
 
-def printString(x): print x
+def printString(x): print(x)
 
 def runEpisode(agent, environment, discount, decision, display, message, pause, episode):
     returns = 0
@@ -430,7 +430,7 @@ def parseOptions():
     opts, args = optParser.parse_args()
 
     if opts.manual and opts.agent != 'q':
-        print '## Disabling Agents in Manual Mode (-m) ##'
+        print('## Disabling Agents in Manual Mode (-m) ##')
         opts.agent = None
 
     # MANAGE CONFLICTS
@@ -510,8 +510,12 @@ if __name__ == '__main__':
             def update(self, state, action, nextState, reward):
                 pass
         a = RandomAgent()
+    elif opts.agent == 'asynchvalue':
+        a = valueIterationAgents.AsynchronousValueIterationAgent(mdp, opts.discount, opts.iters)
+    elif opts.agent == 'priosweepvalue':
+        a = valueIterationAgents.PrioritizedSweepingValueIterationAgent(mdp, opts.discount, opts.iters)
     else:
-        if not opts.manual: raise 'Unknown agent type: '+opts.agent
+        if not opts.manual: raise Exception('Unknown agent type: '+opts.agent)
 
 
     ###########################
@@ -519,7 +523,7 @@ if __name__ == '__main__':
     ###########################
     # DISPLAY Q/V VALUES BEFORE SIMULATION OF EPISODES
     try:
-        if not opts.manual and opts.agent == 'value':
+        if not opts.manual and opts.agent in ('value', 'asynchvalue', 'priosweepvalue'):
             if opts.valueSteps:
                 for i in range(opts.iters):
                     tempAgent = valueIterationAgents.ValueIterationAgent(mdp, opts.discount, i)
@@ -541,8 +545,8 @@ if __name__ == '__main__':
         if opts.manual and opts.agent == None:
             displayCallback = lambda state: display.displayNullValues(state)
         else:
-            if opts.agent == 'random': displayCallback = lambda state: display.displayValues(a, state, "CURRENT VALUES")
-            if opts.agent == 'value': displayCallback = lambda state: display.displayValues(a, state, "CURRENT VALUES")
+            if opts.agent in ('random', 'value', 'asynchvalue', 'priosweepvalue'):
+                displayCallback = lambda state: display.displayValues(a, state, "CURRENT VALUES")
             if opts.agent == 'q': displayCallback = lambda state: display.displayQValues(a, state, "CURRENT Q-VALUES")
 
     messageCallback = lambda x: printString(x)
@@ -562,17 +566,17 @@ if __name__ == '__main__':
 
     # RUN EPISODES
     if opts.episodes > 0:
-        print
-        print "RUNNING", opts.episodes, "EPISODES"
-        print
+        print()
+        print("RUNNING", opts.episodes, "EPISODES")
+        print()
     returns = 0
     for episode in range(1, opts.episodes+1):
         returns += runEpisode(a, env, opts.discount, decisionCallback, displayCallback, messageCallback, pauseCallback, episode)
     if opts.episodes > 0:
-        print
-        print "AVERAGE RETURNS FROM START STATE: "+str((returns+0.0) / opts.episodes)
-        print
-        print
+        print()
+        print("AVERAGE RETURNS FROM START STATE: "+str((returns+0.0) / opts.episodes))
+        print()
+        print()
 
     # DISPLAY POST-LEARNING VALUES / Q-VALUES
     if opts.agent == 'q' and not opts.manual:
