@@ -49,21 +49,26 @@ class ValueIterationAgent(ValueEstimationAgent):
         # Write value iteration code here
         "*** YOUR CODE HERE ***"
         mdp = self.mdp
-        discount = self.discount
         iterations = self.iterations
+        states = mdp.getStates()
+        
+        for i in range(iterations):  
+          #iterate over all states and update for each time step
+          selfValueCopy = self.values.copy() 
+          for state in states:
 
-        for i in xrange(iterations):
-          k1_values = self.values.copy() 
-
-          for state in mdp.getStates():
-            q_values = util.Counter() 
+            if self.mdp.isTerminal[state]:
+              selfValueCopy[state] = 0
+              continue
             
+
+            qValueDict = util.Counter() 
             for action in mdp.getPossibleActions(state):
-              q_values[action] = self.computeQValueFromValues(state, action)
+              qValueDict[action] = self.computeQValueFromValues(state, action)
             
-            k1_values[state] = q_values[q_values.argMax()]
-
-          self.values = k1_values
+            selfValueCopy[state] = qValueDict[qValueDict.argMax()]
+          
+          self.values = selfValueCopy
 
 
     def getValue(self, state):
@@ -80,17 +85,20 @@ class ValueIterationAgent(ValueEstimationAgent):
         """
         "*** YOUR CODE HERE ***"
         
+        qValue = 0
         mdp = self.mdp
-        values = self.values
+        if self.mdp.isTerminal(state):
+          return qValue
+          
         discount = self.discount
-        Trans = mdp.getTransitionStatesAndProbs(state, action)
-        formula_trgv = util.Counter()
+        transactionStateAndProbablilities = mdp.getTransitionStatesAndProbs(state, action)
+        qValueForStateDict = util.Counter()
 
-        for (nextState, prob) in Trans:
-          Reward = mdp.getReward(state, action, nextState)
-          formula_trgv[nextState] = prob * (Reward + discount * self.getValue(nextState))
+        for (nextState, probability) in transactionStateAndProbablilities:
+          reward = mdp.getReward(state, action, nextState)
+          qValueForStateDict[nextState] = probability * (reward + discount * self.getValue(nextState))
 
-        return formula_trgv.totalCount()
+        return qValueForStateDict.totalCount()
 
 
     def computeActionFromValues(self, state):
@@ -103,20 +111,21 @@ class ValueIterationAgent(ValueEstimationAgent):
           terminal state, you should return None.
         """
         "*** YOUR CODE HERE ***"
+        bestAction = None
         mdp = self.mdp
 
-        best_action = None
-        q_best = float('-inf')
+        if self.mdp.isTerminal(state):
+          return bestAction
+          
+        bestQValue = float('-inf')
 
         for action in mdp.getPossibleActions(state):
-          qsa = self.computeQValueFromValues(state, action) # Q, given the s and a
-          if qsa > q_best:
-            q_best = qsa
-            best_action = action
+          qValueForStateActionPair = self.computeQValueFromValues(state, action)
+          if qValueForStateActionPair > bestQValue:
+            bestQValue = qValueForStateActionPair
+            bestAction = action
 
-        return best_action
-
-
+        return bestAction
 
     def getPolicy(self, state):
         return self.computeActionFromValues(state)
