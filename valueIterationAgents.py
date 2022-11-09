@@ -57,10 +57,10 @@ class ValueIterationAgent(ValueEstimationAgent):
           selfValueCopy = self.values.copy() 
           for state in states:
 
-            if self.mdp.isTerminal[state]:
+            if self.mdp.isTerminal(state):
               selfValueCopy[state] = 0
               continue
-            
+
 
             qValueDict = util.Counter() 
             for action in mdp.getPossibleActions(state):
