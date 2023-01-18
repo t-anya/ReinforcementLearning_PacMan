@@ -102,6 +102,35 @@ class QLearningAgent(ReinforcementAgent):
               choosenAction = random.choice([choosenAction, legalAction])
         return choosenAction
 
+#make a dict , with action and actionValueProbability
+    def computeActionUsingBoltzmannExploration(self, state):
+        choosenAction = None
+        allLegalActions = self.getLegalActions(state)
+        if len(allLegalActions) == 0: 
+          return choosenAction
+        else:
+          qValueList = []
+          for legalAction in allLegalActions:
+            qValueForAction = self.getQValue(state, legalAction)
+            qValueList.append(qValueForAction)
+
+          denominator = 0
+          probabilityList = []
+          for qVal in qValueList:
+            numerator = math.exp(qVal/self.temperature)
+            probabilityList.append(numerator)
+            denominator+= numerator
+          
+          actionValueProbabilityList = []
+
+          
+            # if qValueForAction > maxQValue:
+            #   maxQValue = qValueForAction
+            #   choosenAction = legalAction
+            # elif qValueForAction == maxQValue:
+            #   choosenAction = random.choice([choosenAction, legalAction])
+        return choosenAction
+
     def getAction(self, state):
         """
           Compute the action to take in the current state.  With
@@ -120,9 +149,10 @@ class QLearningAgent(ReinforcementAgent):
         if len(legalActions) == 0:
           return action
         else: 
-          boolean = util.flipCoin(self.epsilon)
+          boolean = util.explore(self.temperature)
           if boolean:
             action = random.choice(legalActions)
+            #explore
           else:
             action = self.computeActionFromQValues(state)
         return action

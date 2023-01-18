@@ -574,6 +574,8 @@ def flipCoin(p):
     r = random.random()
     return r < p
 
+def explore(temp):
+    return temp > 1.0
 
 def chooseFromDistribution(distribution):
     "Takes either a counter or a list of (prob, key) pairs and samples"
