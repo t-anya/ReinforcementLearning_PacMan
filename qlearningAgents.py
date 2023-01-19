@@ -102,33 +102,32 @@ class QLearningAgent(ReinforcementAgent):
               choosenAction = random.choice([choosenAction, legalAction])
         return choosenAction
 
-#make a dict , with action and actionValueProbability
     def computeActionUsingBoltzmannExploration(self, state):
         choosenAction = None
         allLegalActions = self.getLegalActions(state)
         if len(allLegalActions) == 0: 
           return choosenAction
         else:
-          qValueList = []
+          qValueActionList = []
           for legalAction in allLegalActions:
             qValueForAction = self.getQValue(state, legalAction)
-            qValueList.append(qValueForAction)
+            qValueActionList.append((qValueForAction,legalAction))
 
           denominator = 0
           probabilityList = []
-          for qVal in qValueList:
-            numerator = math.exp(qVal/self.temperature)
-            probabilityList.append(numerator)
+          for qVal in qValueActionList:
+            numerator = math.exp(qVal[0]/self.temperature)
+            probabilityList.append((numerator,legalAction))
             denominator+= numerator
           
-          actionValueProbabilityList = []
-
-          
-            # if qValueForAction > maxQValue:
-            #   maxQValue = qValueForAction
-            #   choosenAction = legalAction
-            # elif qValueForAction == maxQValue:
-            #   choosenAction = random.choice([choosenAction, legalAction])
+          actionValueProbabilityList = list(map(lambda x: (x[0]/denominator,x[1]), probabilityList))
+          randomValue = random.uniform(0, 1)
+          probabilitySum = 0
+          for probability in actionValueProbabilityList:
+            probabilitySum += probability[0]
+            if randomValue <= probabilitySum:
+                choosenAction = probability[1]
+                break
         return choosenAction
 
     def getAction(self, state):
