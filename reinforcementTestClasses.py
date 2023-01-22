@@ -259,11 +259,12 @@ class ApproximateQLearningTest(testClasses.TestCase):
         self.grid = gridworld.Gridworld(parseGrid(testDict['grid']))
         self.env = gridworld.GridworldEnvironment(self.grid)
         self.epsilon = float(testDict['epsilon'])
+        self.temperature = float(testDict['temperature'])
         self.learningRate = float(testDict['learningRate'])
         self.extractor = 'IdentityExtractor'
         if 'extractor' in testDict:
             self.extractor = testDict['extractor']
-        self.opts = {'actionFn': self.env.getPossibleActions, 'epsilon': self.epsilon, 'gamma': self.discount, 'alpha': self.learningRate}
+        self.opts = {'actionFn': self.env.getPossibleActions, 'epsilon': self.epsilon, 'gamma': self.discount, 'alpha': self.learningRate, 'temperature': self.temperature}
         numExperiences = int(testDict['numExperiences'])
         maxPreExperiences = 10
         self.numsExperiencesForDisplay = list(range(min(numExperiences, maxPreExperiences)))
@@ -421,8 +422,9 @@ class QLearningTest(testClasses.TestCase):
         self.grid = gridworld.Gridworld(parseGrid(testDict['grid']))
         self.env = gridworld.GridworldEnvironment(self.grid)
         self.epsilon = float(testDict['epsilon'])
+        self.temperature = float(testDict['temperature'])
         self.learningRate = float(testDict['learningRate'])
-        self.opts = {'actionFn': self.env.getPossibleActions, 'epsilon': self.epsilon, 'gamma': self.discount, 'alpha': self.learningRate}
+        self.opts = {'actionFn': self.env.getPossibleActions, 'epsilon': self.epsilon, 'gamma': self.discount, 'alpha': self.learningRate, 'temperature': self.temperature}
         numExperiences = int(testDict['numExperiences'])
         maxPreExperiences = 10
         self.numsExperiencesForDisplay = list(range(min(numExperiences, maxPreExperiences)))
@@ -605,10 +607,11 @@ class EpsilonGreedyTest(testClasses.TestCase):
         self.grid = gridworld.Gridworld(parseGrid(testDict['grid']))
         self.env = gridworld.GridworldEnvironment(self.grid)
         self.epsilon = float(testDict['epsilon'])
+        self.temperature = float(testDict['temperature'])
         self.learningRate = float(testDict['learningRate'])
         self.numExperiences = int(testDict['numExperiences'])
         self.numIterations = int(testDict['iterations'])
-        self.opts = {'actionFn': self.env.getPossibleActions, 'epsilon': self.epsilon, 'gamma': self.discount, 'alpha': self.learningRate}
+        self.opts = {'actionFn': self.env.getPossibleActions, 'epsilon': self.epsilon, 'gamma': self.discount, 'alpha': self.learningRate,  'temperature' : self.temperature }
         if sys.platform == 'win32':
             _, question_name, test_name = testDict['test_out_file'].split('\\')
         else:

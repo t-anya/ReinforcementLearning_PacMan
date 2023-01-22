@@ -129,6 +129,7 @@ class QLearningAgent(ReinforcementAgent):
                 choosenAction = probability[1]
                 break
         return choosenAction
+        #ask prof about how to choose
 
     def getAction(self, state):
         """
@@ -153,7 +154,9 @@ class QLearningAgent(ReinforcementAgent):
             action = random.choice(legalActions)
             #explore
           else:
-            action = self.computeActionFromQValues(state)
+            #action = self.computeActionFromQValues(state)
+            action = self.computeActionUsingBoltzmannExploration(state)
+
         return action
 
     def update(self, state, action, nextState, reward):
@@ -181,7 +184,7 @@ class QLearningAgent(ReinforcementAgent):
 class PacmanQAgent(QLearningAgent):
     "Exactly the same as QLearningAgent, but with different default parameters"
 
-    def __init__(self, epsilon=0.05,gamma=0.8,alpha=0.2, numTraining=0, **args):
+    def __init__(self, epsilon=0.05,gamma=0.8,alpha=0.2, numTraining=0,temperature = 2000, **args):
         """
         These default parameters can be changed from the pacman.py command line.
         For example, to change the exploration rate, try:
@@ -196,6 +199,8 @@ class PacmanQAgent(QLearningAgent):
         args['gamma'] = gamma
         args['alpha'] = alpha
         args['numTraining'] = numTraining
+        args['temperature'] = temperature
+
         self.index = 0  # This is always Pacman
         QLearningAgent.__init__(self, **args)
 

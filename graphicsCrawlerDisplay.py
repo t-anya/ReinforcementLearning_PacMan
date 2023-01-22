@@ -52,6 +52,12 @@ class Application:
         self.learner.setEpsilon(self.epsilon)
         self.epsilon_label['text'] = 'Epsilon: %.3f' % (self.epsilon)
 
+    def decrementTemperature(self, dec):
+        self.temp -= dec
+        self.temperature = self.sigmoid(self.temp)
+        self.learner.setTemperature(self.temperature)
+        self.temperature_label['text'] = 'Temp: %.3f' % (self.temperature)
+
     def incrementGamma(self, inc):
         self.ga += inc
         self.gamma = self.sigmoid(self.ga)
@@ -135,6 +141,17 @@ class Application:
         text="+",command=(lambda: self.incrementEpsilon(self.inc)))
         self.epsilon_plus.grid(row=0, column=5)
 
+    def setupTemperatureButtonAndLabel(self, win):
+        self.epsilon_minus = tkinter.Button(win,
+        text="-",command=(lambda: self.decrementTemperature(1)))
+        self.epsilon_minus.grid(row=0, column=3)
+
+        # self.epsilon = self.sigmoid(self.ep)
+        # self.epsilon_label = tkinter.Label(win, text='Epsilon: %.3f' % (self.epsilon))
+        # self.epsilon_label.grid(row=0, column=4)
+
+        
+
     def setupSpeedButtonAndLabel(self, win):
         self.speed_minus = tkinter.Button(win,
         text="-",command=(lambda: self.incrementSpeed(.5)))
@@ -185,6 +202,7 @@ class Application:
         self.learner = qlearningAgents.QLearningAgent(actionFn=actionFn)
 
         self.learner.setEpsilon(self.epsilon)
+        self.learner.setTemperature(self.temperature)
         self.learner.setLearningRate(self.alpha)
         self.learner.setDiscount(self.gamma)
 
