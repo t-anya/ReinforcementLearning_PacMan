@@ -33,7 +33,7 @@ class ValueEstimationAgent(Agent):
       Q-Values while acting in the environment.
     """
 
-    def __init__(self, alpha=1.0, epsilon=0.05, gamma=0.8, numTraining = 10):
+    def __init__(self, alpha=1.0, epsilon=0.05, gamma=0.8, numTraining = 10, temperature = 2000):
         """
         Sets options, which can be passed in via the Pacman command line using -a alpha=0.5,...
         alpha    - learning rate
@@ -43,6 +43,8 @@ class ValueEstimationAgent(Agent):
         """
         self.alpha = float(alpha)
         self.epsilon = float(epsilon)
+        self.temperature = float(temperature)
+
         self.discount = float(gamma)
         self.numTraining = int(numTraining)
 

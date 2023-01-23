@@ -19,4 +19,6 @@ learningRate: "0.1"
 numExperiences: "100"
 valueIterations: "100"
 iterations: "10000"
+temperature: "100"
+
 
