@@ -158,7 +158,7 @@ class QLearningAgent(ReinforcementAgent):
             action = self.computeActionUsingBoltzmannExploration(state)
 
         return action
-
+ 
     def update(self, state, action, nextState, reward):
         """
           The parent class calls this to observe a
